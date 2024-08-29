@@ -35,13 +35,17 @@ return [
     |
     */
 
-    'guards' => [
+    // ログイン画面の数だけ必要
+   'guards' => [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
         ],
+         'admin' => [
+             'driver' => 'session',
+             'provider' => 'admins',
+         ],
     ],
-
     /*
     |--------------------------------------------------------------------------
     | User Providers
@@ -58,17 +62,15 @@ return [
     | Supported: "database", "eloquent"
     |
     */
-
-    'providers' => [
+     'providers' => [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+         'admins' => [
+             'driver' => 'eloquent',
+             'model' => App\Models\Admin::class,
+         ],
     ],
 
     /*
