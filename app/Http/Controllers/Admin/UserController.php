@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class UserController extends Controller
 {
@@ -11,18 +12,18 @@ class UserController extends Controller
 
         $keyword = $request->input('keyword');
 
-        $query = User::query();
+        
 
-        if(!empty($keyword)) {
-            $query->where('name','LIKE',"%{$keyword}%")
-            ->orwhere('kana','LIKE',"%{$keyword}%");
+        if($keyword) {
+           $users = User::where('name','like',"%{$keyword}%")
+            ->orWhere('kana','like',"%{$keyword}%")->paginate(15);
+        } else {
+            $users = User::paginate(15);
         }
-
-        $users = User::paginate(15);
-
+        
         $total = $users->total();
 
-        return view('users.index',compact('users','total','keyword'));
+        return view('admin.users.index',compact('users','total','keyword'));
     }
 
     public function show(User $user) {
