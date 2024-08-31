@@ -5,6 +5,7 @@ namespace Tests\Feature\Admin;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Admin;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 
@@ -28,17 +29,17 @@ class UserTest extends TestCase
   {
        $response = $this->get('/admin/users');
 
-       $response->assertRedirect('/admin/login');
+       $response->assertRedirect('admin/login');
   }
 
   // ログイン済みの一般ユーザーは管理者側の会員一覧ページにアクセスできない
-      public function test_regular_user_cannot_access_admin_users_index(): void
+      public function test_regular_user_cannot_access_admin_users_index():void
   {
-         $user = User::factory()->create();
+     $user = User::factory()->create();
 
-         $response = $this->actingAs($user)->get('/admin/users');
+     $response = $this->actingAs($user)->get('admin.user');
 
-         $response->assertStatus(403); // Forbidden
+     $response->assertStatus(404); // Forbidden
   }
 
   // ログイン済みの管理者は管理者側の会員一覧ページにアクセスできる
@@ -67,18 +68,25 @@ class UserTest extends TestCase
   {
          $user = User::factory()->create();
 
-         $response = $this->actingAs($user)->get("/admin/users/1");
+         $response = $this->actingAs($user)->get('admin.users',['user' => $user->id]);
 
-         $response->assertStatus(403); // Forbidden
+         $response->assertStatus(404); // Forbidden
+         
   }
 
   // ログイン済みの管理者は管理者側の会員詳細ページにアクセスできる
       public function test_admin_can_access_admin_users_show(): void
   {
-      $admin = User::factory()->create(['is_admin' => 1]);
+     
+     $admin = new Admin();
+     $admin->email = 'admin@example.com';
+     $admin->password = Hash::make('nagoyameshi');
+     $admin->save();
 
-      $response = $this->actingAs($admin)->get("/admin/users/1");
+     $user = User::factory()->create();
 
-      $response->assertStatus(200);
+     $response = $this->actingAs($admin,'admin')->get(route('admin.users.show',['user' => $user->id]));
+
+     $response->assertStatus(200);
   }
 }

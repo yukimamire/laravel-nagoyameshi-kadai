@@ -36,7 +36,7 @@ require __DIR__.'/auth.php';
     
 //     });
 
-Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin'], function () {
+Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin']], function () {
     Route::get('home', [HomeController::class, 'index'])->name('home');
     
    
