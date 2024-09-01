@@ -5,16 +5,15 @@ namespace Tests\Feature\Admin;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-
+use App\Models\User;
 use App\Models\Admin;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Category;
 
 
-
-
 class CategoryTest extends TestCase
 {
+    use RefreshDatabase;
 
     // 未ログインのユーザーは管理者側のカテゴリ一覧ページにアクセスできない
     public function test_guest_cannot_access_admin_categories_index_page():void
