@@ -12,8 +12,6 @@ class UserController extends Controller
 
         $keyword = $request->input('keyword');
 
-        
-
         if($keyword) {
            $users = User::where('name','like',"%{$keyword}%")->orWhere('kana','like',"%{$keyword}%")->paginate(15);
         } else {

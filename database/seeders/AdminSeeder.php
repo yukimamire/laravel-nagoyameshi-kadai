@@ -17,6 +17,13 @@ class AdminSeeder extends Seeder
         $admin = new Admin();
          $admin->email = 'admin@example.com';
          $admin->password = Hash::make('nagoyameshi');
-         $admin->save();
+        
+
+          // 課題レビュー用の管理者アカウント
+          Admin::create([
+            'id' => '3',
+            'email' => 'admin2@example.com',
+            'password' => Hash::make('password'),
+        ]);
     }
 }
