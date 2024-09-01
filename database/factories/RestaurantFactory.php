@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\Restaurant;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Restaurant;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Restaurant>
@@ -25,8 +25,8 @@ class RestaurantFactory extends Factory
              'highest_price' =>	5000,
              'postal_code' => '0000000',
              'address' =>     'テスト',
-             'opening_time' =>	'10:00:00',
-             'closing_time' =>	'20:00:00',
+             'opening_time' =>	'10:00',
+             'closing_time' =>	'20:00',
              'seating_capacity' =>	50
         ];
     }

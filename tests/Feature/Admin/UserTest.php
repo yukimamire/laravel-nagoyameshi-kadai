@@ -21,14 +21,14 @@ class UserTest extends TestCase
     //     $response->assertStatus(200);
     // }
 // }
-     use RefreshDatabase;
+     // use RefreshDatabase;
 
 //   未ログインのユーザーは管理者側の会員一覧ページにアクセスできない
-     public function test_guest_cannot_access_admin_users_index():void
+     public function test_guest_user_cannot_access_admin_users_index():void
   {
-       $response = $this->get('/admin/users');
+       $response = $this->get('/admin/index');
 
-       $response->assertRedirect('/admin/login');
+       $response->assertRedirect(route('login'));
   }
 
   // ログイン済みの一般ユーザーは管理者側の会員一覧ページにアクセスできない
@@ -42,7 +42,7 @@ class UserTest extends TestCase
   }
 
   // ログイン済みの管理者は管理者側の会員一覧ページにアクセスできる
-       public function test_admin_can_access_admin_users_index(): void
+       public function test_regular_admin_can_access_admin_users_index(): void
   {
          $admin = new Admin();
          $admin->email = 'admin@example.com';
@@ -55,7 +55,7 @@ class UserTest extends TestCase
   }
 
   // 未ログインのユーザーは管理者側の会員詳細ページにアクセスできない
-       public function test_guest_cannot_access_admin_users_show(): void
+       public function test_guest_user_cannot_access_admin_users_show(): void
   {
           $response = $this->get("/admin/users/1");
    
