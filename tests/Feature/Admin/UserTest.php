@@ -21,7 +21,7 @@ class UserTest extends TestCase
     //     $response->assertStatus(200);
     // }
 // }
-  use RefreshDatabase;
+     use RefreshDatabase;
 
 //   未ログインのユーザーは管理者側の会員一覧ページにアクセスできない
      public function test_guest_cannot_access_admin_users_index():void
