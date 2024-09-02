@@ -20,8 +20,8 @@ class AdminSeeder extends Seeder
         );
         
         $admin2 = Admin::firstOrCreate([
-           'id' => 10,
-            'email' => 'admin10@example.com',
+           'id' => 200,
+            'email' => 'admin5577@example.com',
             'password' => Hash::make('password'),
         ]);
 
