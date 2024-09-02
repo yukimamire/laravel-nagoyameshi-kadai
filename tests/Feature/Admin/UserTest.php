@@ -12,28 +12,16 @@ use Illuminate\Support\Facades\Hash;
 
 class UserTest extends TestCase
 {
-//     /**
-    //  * A basic feature test example.
-    //  */
-    // public function test_example(): void
-    // {
-    //     $response = $this->get('/');
 
-    //     $response->assertStatus(200);
-    // }
-// }
-     // use RefreshDatabase;
+     use RefreshDatabase;
 
 //   未ログインのユーザーは管理者側の会員一覧ページにアクセスできない
      public function test_guest_user_cannot_access_admin_users_index():void
   {
        $response = $this->get('/admin/index');
 
-<<<<<<< HEAD
-       $response->assertRedirect('admin/login');
-=======
        $response->assertRedirect(route('login'));
->>>>>>> feature-admin-restaurants
+
   }
 
   // ログイン済みの一般ユーザーは管理者側の会員一覧ページにアクセスできない

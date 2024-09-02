@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\RestaurantController;
+use App\Http\Controllers\Admin\CategoryController;
 
 
 /*
@@ -29,21 +30,22 @@ require __DIR__.'/auth.php';
 
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin']], function () {
+    // HOME
     Route::get('home', [HomeController::class, 'index'])->name('home');
+    // User
     Route::resource('users',UserController::class)->only(['index','show']);
+    // // レストラン管理
+    Route::resource('restaurants',Admin\RestaurantController::class);
 
-    // Route::resource('restaurants',Admin\RestaurantController::class);
+    Route::controller(CategoryController::class)->group(function () {
+        Route::get('admin/categories/index', 'index')->name('admin.categories.index');
+        Route::post('admin/categories','store')->name('admin.categories.store');
+        Route::delete('admin/categories/{category}','destroy')->name('admin.categories.destroy');
+        Route::patch('admin/categories/update/{category}','update')->name('admin.categories.update');
+});
+    // //  // カテゴリ
+    // Route::resource('admin.categories',CategoryController::class)
+    // ->names('admin.categories')
+    // ->only(['index','store','update','destroy']);
 });
 
-
-Route::group(['middleware' => 'auth:admin'], function () {
-    Route::controller(RestaurantController::class)->group(function () {
-        Route::get('admin/restaurants/index', 'index')->name('admin.restaurants.index');
-        Route::get('admin/restaurants/show/{restaurant}','show')->name('admin.restaurants.show');
-        Route::get('admin/restaurants/create', 'create')->name('admin.restaurants.create');
-        Route::post('admin/restaurants','store')->name('admin.restaurants.store');
-        Route::get('admin/restaurants/edit/{restaurant}','edit')->name('admin.restaurants.edit');
-        Route::delete('admin/restaurants/destroy/{restaurant}','destroy')->name('admin.restaurants.destroy');
-        Route::patch('admin/restaurants/update{restaurant}','update')->name('admin.restaurants.update');
-    });
-});

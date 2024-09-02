@@ -165,7 +165,6 @@ class RestaurantTest extends TestCase
     public function test_regular_admin_can_registration_restaurants_update():void
    {
         $admin = new Admin();
-
         $admin->email = 'admin@example.com';
         $admin->password = Hash::make('nagoyameshi');
         $admin->save();
