@@ -20,4 +20,10 @@ class Restaurant extends Model
              'closing_time' ,
              'seating_capacity'
     ];
+
+    public function category() {
+        return $this->belongsToMany(Restaurant::class,'category_restaurant')->withTimestamps();
+    }
+
 }
+
