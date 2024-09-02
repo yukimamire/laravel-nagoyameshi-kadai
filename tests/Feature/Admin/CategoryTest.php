@@ -76,7 +76,7 @@ class CategoryTest extends TestCase
         $admin->save();
 
         $category = Category::factory()->create();
-     $data = $category->toArray();
+        $data = $category->toArray();
  
      unset($data['created_at'], $data['updated_at']);
  

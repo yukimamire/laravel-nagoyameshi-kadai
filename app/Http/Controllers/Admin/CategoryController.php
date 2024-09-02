@@ -57,7 +57,7 @@ class CategoryController extends Controller
         $category->name = $request->input('name');
         $category->update();
 
-        return redirect()->route('admin.categories.index',$category)->with('flash_message','カテゴリを編集しました。');
+        return redirect()->route('admin.categories.index')->with('flash_message','カテゴリを編集しました。');
     }
 
     /**
@@ -67,6 +67,6 @@ class CategoryController extends Controller
     {
         $category->delete();
 
-        return redirect()->route('admin.categories.index',compact('category'))->with('flash_message','カテゴリを削除しました。');
+        return redirect()->route('admin.categories.index')->with('flash_message','カテゴリを削除しました。');
     }
 }

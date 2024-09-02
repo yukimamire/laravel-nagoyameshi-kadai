@@ -37,15 +37,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     // // レストラン管理
     Route::resource('restaurants',Admin\RestaurantController::class);
 
-    Route::controller(CategoryController::class)->group(function () {
-        Route::get('admin/categories/index', 'index')->name('admin.categories.index');
-        Route::post('admin/categories','store')->name('admin.categories.store');
-        Route::delete('admin/categories/{category}','destroy')->name('admin.categories.destroy');
-        Route::patch('admin/categories/update/{category}','update')->name('admin.categories.update');
-});
-    // //  // カテゴリ
-    // Route::resource('admin.categories',CategoryController::class)
+     // //  // カテゴリ
+    Route::resource('categories',Admin\CategoryController::class)->only(['index','store','update','destroy']);
     // ->names('admin.categories')
-    // ->only(['index','store','update','destroy']);
+   
 });
+
 

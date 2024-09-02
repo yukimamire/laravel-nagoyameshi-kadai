@@ -33,7 +33,7 @@ class RestaurantTest extends TestCase
 
         $response = $this->actingAs($user)->get(route('admin.restaurants.index'));
 
-        $response->assertStatus(302);
+        $response->assertStatus(404);
      }
         
     // ログイン済みの管理者は管理者側の店舗一覧ページにアクセスできる
