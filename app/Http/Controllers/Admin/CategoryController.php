@@ -16,7 +16,7 @@ class CategoryController extends Controller
         $keyword = $request->input('keyword');
     
          if($keyword) {
-            $restaurants = Category::where('name','like',"%{$keyword}%")->paginate(15);
+            $categories = Category::where('name','like',"%{$keyword}%")->paginate(15);
          } else {
     
          $categories = Category::paginate(15);
