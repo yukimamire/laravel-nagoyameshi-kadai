@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\category;
 use App\Models\Restaurant;
 
 class RestaurantController extends Controller
@@ -21,7 +22,6 @@ class RestaurantController extends Controller
 
             $restaurants = Restaurant::paginate(15);
         }
-        
         $total = Restaurant::all()->count();
 
         return view('admin.restaurants.index',compact('restaurants','total','keyword'));
@@ -31,7 +31,9 @@ class RestaurantController extends Controller
      */
     public function create()
     {
-        return view('admin.restaurants.create');
+        $categories = Category::all();
+
+        return view('admin.restaurants.create',compact('categories'));
     }
 
     /**
@@ -54,26 +56,24 @@ class RestaurantController extends Controller
 
         $restaurant = new Restaurant();
         $restaurant->name = $request->input('name');
-        $restaurant->image = $request->input('image');
-        $restaurant->description = $request->input('description');
-        $restaurant->lowest_price = $request->input('lowest_price');
-        $restaurant->highest_price = $request->input('highest_price');
-        $restaurant->postal_code = $request->input('postal_code');
-        $restaurant->address = $request->input('address');
-        $restaurant->opening_time = $request->input('opening_time');
-        $restaurant->closing_time = $request->input('closing_time');
-        $restaurant->seating_capacity = $request->input('seating_capacity');
-
-           // アップロードされたファイル（name="image"）が存在すれば処理を実行する
          if ($request->hasFile('image')) {
-            // アップロードされたファイル（name="image"）をstorage/app/public/restaurantsフォルダに保存し、戻り値（ファイルパス）を変数$imageに代入する
             $image = $request->file('image')->store('public/restaurants');
-            // ファイルパスからファイル名のみを取得し、Restaurantインスタンスのimageプロパティに代入する
             $restaurant->image = basename($image);
-            } else {
-                $restaurant->image = '';
-            }
+        } else {
+            $restaurant->image = '';
+        }
+            $restaurant->description = $request->input('description');
+            $restaurant->lowest_price = $request->input('lowest_price');
+            $restaurant->highest_price = $request->input('highest_price');
+            $restaurant->postal_code = $request->input('postal_code');
+            $restaurant->address = $request->input('address');
+            $restaurant->opening_time = $request->input('opening_time');
+            $restaurant->closing_time = $request->input('closing_time');
+            $restaurant->seating_capacity = $request->input('seating_capacity');
             $restaurant->save();
+
+            $category_ids = array_filter($request->input('category_ids'));
+            $restaurant->categories()->sync($category_ids);
 
             return redirect()->route('admin.restaurants.index')->with('flash_message','店舗を登録しました。');
     }
@@ -91,7 +91,12 @@ class RestaurantController extends Controller
      */
     public function edit(Restaurant $restaurant)
     {
-        return view('admin.restaurants.edit',compact('restaurant'));
+        $categories = Category::all();
+
+        // 設定されたカテゴリのIDを配列化する
+        $category_ids = $restaurant->categories->pluck('id')->toArray();
+
+        return view('admin.restaurants.edit',compact('restaurant','categories','category_ids'));
     }
 
     /**
@@ -132,6 +137,10 @@ class RestaurantController extends Controller
                 $restaurant->save();
             }
         
+            $category_ids = array_filter($request->input('category_ids',[]));
+            $restaurant->categories()->sync($category_ids);
+
+
             return redirect()->route('admin.restaurants.show', $restaurant)
                 ->with('flash_message', '店舗を編集しました。');
         }

@@ -10,6 +10,6 @@ class Category extends Model
     use HasFactory;
 
     public function restaurants() {
-        return $this->belongsToMany(Category::class,'category_restaurant')->withTimestamps();
+        return $this->belongsToMany(Restaurant::class)->withTimestamps();
     }
 }

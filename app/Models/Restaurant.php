@@ -21,8 +21,8 @@ class Restaurant extends Model
              'seating_capacity'
     ];
 
-    public function category() {
-        return $this->belongsToMany(Restaurant::class,'category_restaurant')->withTimestamps();
+    public function categories() {
+        return $this->belongsToMany(Category::class,'category_restaurant')->withTimestamps();
     }
 
 }
