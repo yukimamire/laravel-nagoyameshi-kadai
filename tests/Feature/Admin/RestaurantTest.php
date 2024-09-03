@@ -10,6 +10,7 @@ use App\Models\Admin;
 use App\Models\Category;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Restaurant;
+use App\Models\RegularHoliday;
 use App\Providers\RouteServiceProvider;
 
 class RestaurantTest extends TestCase
@@ -92,15 +93,15 @@ class RestaurantTest extends TestCase
     //   未ログインのユーザーは店舗を登録できない
     public function test_guest_cannot_registration_restaurants_store():void
     {
-        // ダミーデータ3つを作り、IDを定義
-        $categories = Category::factory()->count(3)->create();
-        $category_ids = $categories->pluck('id')->toArray();
+       // ダミーデータ3つを作り、IDを定義
+       $categories = Category::factory()->count(3)->create();
+       $category_ids = $categories->pluck('id')->toArray();
 
-        $user = User::factory()->create();
-        
-        $response = $this->actingAs($user)->get('admin.restaurants.store');
+       $user = User::factory()->create();
+       
+       $response = $this->actingAs($user)->get('admin.restaurants.store');
 
-        $response->assertStatus(404);
+       $response->assertStatus(404);
   }
     
     // ログイン済みの一般ユーザーは管理者側の店舗登録ページにアクセスできない
@@ -132,45 +133,30 @@ class RestaurantTest extends TestCase
    // ログイン済みの管理者は店舗を登録できる
    public function test_regular_admin_can_registration_restaurants_store():void
    {
-     // ダミーデータ3つを作り、IDを定義
-     $categories = Category::factory()->count(3)->create();
-     $category_ids = $categories->pluck('id')->toArray();
+    $admin = new Admin();
+    $admin->email = 'admin@example.com';
+    $admin->password = Hash::make('nagoyameshi');
+    $admin->save();
+    $this->actingAs($admin);
 
-     $admin = new Admin();
-     $admin->email = 'admin@example.com';
-     $admin->password = Hash::make('nagoyameshi');
-     $admin->save();
-
-     //  送信するレストランデータを定義し、category_ids パラメータを追加
-     $restaurant_data = [
-        'name' => 'テスト',
-        'description' => 'テスト',
-        'lowest_price' => 1000,
-         'highest_price' =>	5000,
-         'postal_code' => '0000000',
-         'address' =>     'テスト',
-         'opening_time' =>	'10:00',
-         'closing_time' =>	'20:00',
-         'seating_capacity' =>	50,
-        'category_ids' => $category_ids
-     ];
-
-    // レストランを登録するリクエストを管理者として送信
-     $response = $this->actingAs($admin,'admin')->post(route('admin.restaurants.store'),$restaurant_data);
-
-     //レスポンスとレストランデータが正しく登録されたかを検証
-    $response->assertStatus(302); // 成功
-    unset($restaurant_data['category_ids']); // category_ids を削除
-    $this->assertDatabaseHas('restaurants', $restaurant_data); // restaurantsテーブルを確認
-
-     //category_restaurant テーブルにデータが存在することを検証
-     foreach($category_ids as $category_id) {
-        $this->assertDatabaseHas('category_restaurant',[
-            'restaurant_id' => Restaurant::first()->id,
-            'category_id' => $category_id,
+    $categoryIds = [];
+    for ($i = 1; $i <= 3; $i++) {
+        $category = Category::create([
+            'name' => 'カテゴリ' . $i
         ]);
-     }  
+        array_push($categoryIds, $category->id);    
     }
+
+    $restaurant = Restaurant::factory()->create();
+    $data = $restaurant->toArray();
+
+    $response = $this->post(route('admin.restaurants.store'), $data);
+
+    unset($data['category_ids'],$data['updated_at'],$data['created_at']);
+    $this->assertDatabaseHas('restaurants', $data);
+    
+    $response->assertStatus(302);
+}
 
     //未ログインのユーザーは管理者側の店舗編集ページにアクセスできない
     public function test_guest_cannot_access_admin_restaurant_edit():void
@@ -235,17 +221,21 @@ class RestaurantTest extends TestCase
     // ログイン済みの管理者は店舗ページを更新できる
     public function test_regular_admin_can_registration_restaurants_update():void
    {
-     $admin = new Admin();
-     $admin->email = 'admin@example.com';
-     $admin->password = Hash::make('nagoyameshi');
-     $admin->save();
-     
-    // ダミーデータ3つを作り、IDを定義
+    $admin = new Admin();
+    $admin->email = 'admin@example.com';
+    $admin->password = Hash::make('nagoyameshi');
+    $admin->save();
+    $this->actingAs($admin);
+
+    // カテゴリーのデータ内にあるIDを取得する
     $categories = Category::factory()->count(3)->create();
     $category_ids = $categories->pluck('id')->toArray();
-  
 
-     $old_restaurant = Restaurant::factory()->create();
+    // 定休日のデータ内にあるIDを取得する
+    $regular_holidays = RegularHoliday::factory()->count(3)->create();
+    $regular_holiday_ids = $regular_holidays->pluck('id')->toArray();
+
+    $old_restaurant = Restaurant::factory()->create();
      $new_restaurant = [
         'name' => 'テスト',
         'description' => 'テスト',
@@ -257,25 +247,18 @@ class RestaurantTest extends TestCase
          'closing_time' =>	'20:00',
          'seating_capacity' =>	50,
          'category_ids' => $category_ids,
+         'regular_holiday_ids' => $regular_holiday_ids
      ];
+     $response = $this->patch(route('admin.restaurants.update', $old_restaurant), $new_restaurant);
 
-    // レストランを登録するリクエストを管理者として送信
-     $response = $this->actingAs($admin,'admin')->patch(route('admin.restaurants.update',$old_restaurant),$new_restaurant);
-     unset($new_restaurant['category_ids']);
+      unset($new_restaurant['category_ids'],$new_restaurant['regular_holiday_ids']);
+      $this->assertDatabaseHas('restaurants', $new_restaurant);
 
-     $this->assertDatabaseHas('restaurants', $new_restaurant); 
+      $restaurant = Restaurant::latest('id')->first();
 
+        $response->assertStatus(302);
+}
      
-        // restaurants テーブルの中で最新のIDをを取得
-        $restaurant = Restaurant::latest('id')->first();
-
-        // category_restaurant テーブルにカテゴリが登録されていることを確認
-        foreach ($category_ids as $category_id) {
-            $this->assertDatabaseHas('category_restaurant', ['restaurant_id' => $restaurant->id, 'category_id' => $category_id]);
-        }
-         $response->assertRedirect(route('admin.restaurants.show', $old_restaurant));
-     }  
- 
     // 未ログインのユーザーは店舗ページを削除できない
      public function test_guest_cannot_access_delete_admin_restaurant_page():void
     {

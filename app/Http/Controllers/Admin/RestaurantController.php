@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Restaurant;
 use App\Models\Category;
+use App\Models\RegularHoliday;
 
 class RestaurantController extends Controller
 {
@@ -32,8 +33,9 @@ class RestaurantController extends Controller
     public function create()
     {
         $categories = Category::all();
+        $regular_holidays = RegularHoliday::all();
 
-        return view('admin.restaurants.create',compact('categories'));
+        return view('admin.restaurants.create',compact('categories','regular_holidays'));
     }
 
     /**
@@ -75,6 +77,9 @@ class RestaurantController extends Controller
             $category_ids = array_filter($request->input('category_ids'));
             $restaurant->categories()->sync($category_ids);
 
+            $regular_holiday_ids = array_filter($request->input('regular_holiday_ids'));
+            $restaurant->regular_holidays()->sync($regular_holiday_ids);
+
             return redirect()->route('admin.restaurants.index')->with('flash_message','店舗を登録しました。');
     }
 
@@ -93,10 +98,12 @@ class RestaurantController extends Controller
     {
         $categories = Category::all();
 
+        $regular_holidays = RegularHoliday::all();
+
         // 設定されたカテゴリのIDを配列化する
         $category_ids = $restaurant->categories->pluck('id')->toArray();
 
-        return view('admin.restaurants.edit',compact('restaurant','categories','category_ids'));
+        return view('admin.restaurants.edit',compact('restaurant','categories','category_ids','regular_holidays'));
     }
 
     /**
@@ -134,12 +141,14 @@ class RestaurantController extends Controller
             if ($request->hasFile('image')) {
                 $image = $request->file('image')->store('public/restaurants');
                 $restaurant->image = basename($image);
-                $restaurant->save();
+                $restaurant->update();
             }
         
             $category_ids = array_filter($request->input('category_ids',[]));
             $restaurant->categories()->sync($category_ids);
 
+            $regular_holiday_ids = array_filter($request->input('regular_holiday_ids',[]));
+            $restaurant->regular_holidays()->sync($regular_holiday_ids);
 
             return redirect()->route('admin.restaurants.show', $restaurant)
                 ->with('flash_message', '店舗を編集しました。');
