@@ -3,6 +3,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\RestaurantController;
@@ -22,6 +23,10 @@ use App\Http\Controllers\Admin\TermController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+// Auth::routes(['verify' => true]);
+// Route::get('/home', function () {
+//     return view('home'); // 認証済みユーザーのホームページビュー
+// })->middleware(['auth', 'verified'])->name('home');
 
 Route::get('/', function () {
     return view('welcome');
