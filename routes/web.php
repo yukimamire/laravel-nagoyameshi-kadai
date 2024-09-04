@@ -7,6 +7,9 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\RestaurantController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\TermController;
+
 
 
 /*
@@ -34,12 +37,17 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::get('home', [HomeController::class, 'index'])->name('home');
     // User
     Route::resource('users',UserController::class)->only(['index','show']);
-    // // レストラン管理
+    //レストラン管理
     Route::resource('restaurants',Admin\RestaurantController::class);
 
-     // //  // カテゴリ
+     // カテゴリ
     Route::resource('categories',Admin\CategoryController::class)->only(['index','store','update','destroy']);
-    // ->names('admin.categories')
+    
+    // 会社概要
+    Route::resource('company',Admin\CompanyController::class)->only(['index','edit','update']);
+    //   利用規約
+    Route::resource('terms',Admin\TermController::class)->only(['index','edit','update']);
+
    
 });
 
