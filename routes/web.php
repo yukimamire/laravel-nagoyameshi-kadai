@@ -4,12 +4,12 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\RestaurantController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\TermController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\UserController;
 
 
 
@@ -34,6 +34,20 @@ use App\Http\Controllers\HomeController;
 // });
 
 
+// admin以外アクセス可能
+Route::group(['middleware' => 'guest:admin'], function () {
+    Route::get('/',[HomeController::class,'index'])->name('home');
+
+    // ユーザー情報
+ Route::group(['middleware' => ['auth','verified']], function () {
+    Route::resource('user',UserController::class)->only(['index','edit','update']);
+ });
+   
+});
+
+ 
+
+
 // routeの分割
 // failパス
 require __DIR__.'/auth.php';
@@ -41,9 +55,9 @@ require __DIR__.'/auth.php';
 // prefix=>admin admin配下(パス)  as=>名前付きルート auth:admin->auth.php定義されたadminガードで認証
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin']], function () {
     // HOME
-    Route::get('home', [HomeController::class, 'index'])->name('home');
+    Route::get('home', [Admin\HomeController::class, 'index'])->name('home');
     // User
-    Route::resource('users',UserController::class)->only(['index','show']);
+    Route::resource('users',Admin\UserController::class)->only(['index','show']);
     //レストラン管理
     Route::resource('restaurants',Admin\RestaurantController::class);
 
@@ -57,9 +71,5 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
 });
 
 
-// admin以外アクセス可能
-Route::group(['middleware' => 'guest:admin'], function () {
-    Route::get('/',[HomeController::class,'index'])->name('home');
-});
 
 

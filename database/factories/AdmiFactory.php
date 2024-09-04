@@ -18,6 +18,8 @@ class AdmiFactory extends Factory
     {
         return [
             'name' => fake()->name(),
+            'email' => fake()->email(),
+            'password' => fake()->password()
         ];
     }
 }
