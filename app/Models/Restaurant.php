@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Kyslik\ColumnSortable\Sortable;
+
 
 class Restaurant extends Model
 {
@@ -20,6 +22,16 @@ class Restaurant extends Model
              'closing_time' ,
              'seating_capacity'
     ];
+
+     use Sortable;
+
+    public $sortable = [
+        'created_at',  // ここにソート可能なカラムを追加
+        'lowest_price', 
+        'rating', 
+        'popular'
+    ];
+
 
     public function categories() {
         return $this->belongsToMany(Category::class,'category_restaurant')->withTimestamps();
