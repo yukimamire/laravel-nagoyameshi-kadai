@@ -39,7 +39,7 @@ Route::group(['middleware' => 'guest:admin'], function () {
     Route::get('/',[HomeController::class,'index'])->name('home');
 
     // レストラン
-    Route::resource('restaurants',RestaurantController::class)->only(['index']);
+    Route::resource('restaurants',RestaurantController::class)->only(['index','show']);
     
 
     // ユーザー情報

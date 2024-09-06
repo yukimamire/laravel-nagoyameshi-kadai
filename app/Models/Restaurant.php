@@ -28,8 +28,6 @@ class Restaurant extends Model
     public $sortable = [
         'created_at',  // ここにソート可能なカラムを追加
         'lowest_price', 
-        'rating', 
-        'popular'
     ];
 
 
