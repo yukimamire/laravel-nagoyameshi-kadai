@@ -18,6 +18,7 @@ class RestaurantController extends Controller
         $sorts = [
             '掲載日が新しい順' => 'created_at desc',
             '価格が安い順' => 'lowest_price asc',
+            
         ];
         $sort_query = [];
         $sorted = "created_at desc";
@@ -56,11 +57,16 @@ class RestaurantController extends Controller
 
         $total = $restaurants->total();
 
-        return view('restaurants.index', compact('keyword','category_id','price','sorts','sorted','restaurants','categories','total'));
+        return view(
+            'restaurants.index',
+            compact( 'keyword', 'category_id', 'price','sorts','sorted','restaurants', 'categories', 'total'));
     }
-        public function show(Restaurant $restaurant)
-         {
 
-            return view('restaurants.show',compact('restaurant'));
-        }
+    public function show(Restaurant $restaurant)
+    {
+        return view('restaurants.show', compact('restaurant'));
     }
+
+
+
+}
