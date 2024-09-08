@@ -13,6 +13,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Middleware\Subscribed;
 use App\Http\Middleware\NotSubscribed;
+use App\Http\Controllers\ReviewController;
+
 
 
 
@@ -47,6 +49,8 @@ Route::group(['middleware' => 'guest:admin'], function () {
     // ユーザー情報
  Route::group(['middleware' => ['auth','verified']], function () {
     Route::resource('user',UserController::class)->only(['index','edit','update']);
+    // レビュー
+    Route::resource('restaurants.reviews',ReviewController::class)->only(['index']);
  
 
  // サブスクなし
@@ -61,6 +65,9 @@ Route::group(['middleware' => 'subscribed'], function () {
     Route::patch('/subscription/update', [SubscriptionController::class, 'update'])->name('subscription.update');
     Route::get('/subscription/cancel', [SubscriptionController::class, 'cancel'])->name('subscription.cancel');
     Route::delete('/subscription/destroy', [SubscriptionController::class, 'destroy'])->name('subscription.destroy');
+
+    // レビュー
+    Route::resource('restaurants.reviews',ReviewController::class)->only(['create','store','edit','update','destroy']);
 
 });
 });
