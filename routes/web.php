@@ -21,6 +21,7 @@ use App\Http\Controllers\FavoriteController;
 
 
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -47,13 +48,17 @@ Route::group(['middleware' => 'guest:admin'], function () {
 
     // レストラン
     Route::resource('restaurants',RestaurantController::class)->only(['index','show']);
+    // 会社概要
+    Route::get('company',[CompanyController::class,'index'])->name('company.index');
+    Route::get('terms',[TermController::class,'index'])->name('terms.index');
+
 
     // ユーザー情報
- Route::group(['middleware' => ['auth','verified']], function () {
+    Route::group(['middleware' => ['auth','verified']], function () {
     Route::resource('user',UserController::class)->only(['index','edit','update']);
     // レビュー
     Route::resource('restaurants.reviews',ReviewController::class)->only(['index']);
- 
+    
 
  // サブスク未登録
  Route::group(['middleware' => 'not_subscribed'], function () {
