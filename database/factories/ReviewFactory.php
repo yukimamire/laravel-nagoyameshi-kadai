@@ -18,7 +18,7 @@ class ReviewFactory extends Factory
     {
         return [
             'score' => 1,  // スコアを1に設定
-            'content' => 'テスト',  // コンテンツを'テスト'に設定
+            'content' => 'テスト', 
             'restaurant_id' => \App\Models\Restaurant::factory(),  // 関連するレストランを生成
             'user_id' => \App\Models\User::factory(),  // 関連するユーザーを生成
         ];

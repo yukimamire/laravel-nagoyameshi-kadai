@@ -14,6 +14,7 @@ use App\Http\Controllers\SubscriptionController;
 use App\Http\Middleware\Subscribed;
 use App\Http\Middleware\NotSubscribed;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ReservationController;
 
 
 
@@ -53,13 +54,13 @@ Route::group(['middleware' => 'guest:admin'], function () {
     Route::resource('restaurants.reviews',ReviewController::class)->only(['index']);
  
 
- // サブスクなし
+ // サブスク未登録
  Route::group(['middleware' => 'not_subscribed'], function () {
     Route::get('/subscription/create', [SubscriptionController::class, 'create'])->name('subscription.create');
     Route::post('/subscription', [SubscriptionController::class, 'store'])->name('subscription.store');
 });
 
-// サブスクあり
+// サブスク登録済み
 Route::group(['middleware' => 'subscribed'], function () {
     Route::get('/subscription/edit', [SubscriptionController::class, 'edit'])->name('subscription.edit');
     Route::patch('/subscription/update', [SubscriptionController::class, 'update'])->name('subscription.update');
@@ -68,6 +69,10 @@ Route::group(['middleware' => 'subscribed'], function () {
 
     // レビュー
     Route::resource('restaurants.reviews',ReviewController::class)->only(['create','store','edit','update','destroy']);
+
+    // 予約
+    Route::resource('restaurants.reservations',ReservationController::class)->only(['create','store']);
+    Route::resource('reservations',ReservationController::class)->only(['index','destroy']);
 
 });
 });

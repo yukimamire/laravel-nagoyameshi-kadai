@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Kyslik\ColumnSortable\Sortable;
 use App\Models\User;
 use App\Models\Review;
+use App\Models\Reservation;
 
 
 class Restaurant extends Model
@@ -50,5 +51,12 @@ class Restaurant extends Model
         return $query->withAvg('reviews', 'score')->orderBy('reviews_avg_score', $direction);
     }
 
+    public function reservation() {
+        return $this->hasMany(Reservation::class);
+    }
+
+    public function popularSortable($query, $direction) {
+        return $query->withCount('reservations')->orderBy('reservations_count','desc')->get();
+    }
 }
 
